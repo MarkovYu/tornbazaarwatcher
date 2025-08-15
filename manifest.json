@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "TW3B Market Watch",
+  "version": "1.2.0",
+  "permissions": ["scripting", "tabs", "storage", "alarms", "notifications"],
+  "host_permissions": ["https://weav3r.dev/*", "https://www.torn.com/*"],
+  "background": { "service_worker": "background.js" },
+  "options_ui": { "page": "options.html", "open_in_tab": true },
+  "action": { "default_title": "Open TW3B Watcher" },
+  "web_accessible_resources": [
+    { "resources": ["itemids.csv"], "matches": ["<all_urls>"] }
+  ]
+}

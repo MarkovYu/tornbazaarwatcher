@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<title>TW3B – Watcher</title>
+<style>
+  body {
+    font: 14px system-ui, Arial, sans-serif;
+    padding: 18px;
+    max-width: 1200px;
+  }
+  .row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+  input[type="number"] {
+    width: 120px;
+  }
+  textarea {
+    width: 420px;
+    height: 100px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 14px;
+  }
+  th,
+  td {
+    padding: 6px 8px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+  }
+  th {
+    cursor: pointer;
+    user-select: none;
+  }
+  .muted {
+    color: #666;
+    font-size: 12px;
+  }
+  .ok {
+    color: #0a7a0a;
+  }
+  .warn {
+    color: #a65;
+  }
+  .mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  .sticky {
+    position: sticky;
+    top: 0;
+    background: #fff;
+  }
+  a.button {
+    display: inline-block;
+    padding: 6px 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    text-decoration: none;
+  }
+  .sort-ind {
+    font-size: 11px;
+    opacity: 0.7;
+    margin-left: 4px;
+  }
+</style>
+
+<h2>TW3B Watcher (DOM scraper)</h2>
+
+<div class="row">
+  <label
+    >Max vs Market % (e.g. -5):
+    <input id="maxVs" type="number" step="1" value="-5"
+  /></label>
+  <label
+    >Delay per item (ms):
+    <input id="delay" type="number" min="0" step="50" value="800"
+  /></label>
+  <label
+    >Rows per item:
+    <input id="rowsPerItem" type="number" min="1" max="100" step="1" value="20"
+  /></label>
+  <button id="start">Start scan</button>
+  <button id="stop">Stop</button>
+  <button id="clear">Clear results</button>
+</div>
+
+<div class="row">
+  <label
+    >Item IDs (comma / space / newline):
+    <textarea id="ids" placeholder="e.g. 885, 1085, 217 ..."></textarea>
+  </label>
+  <div>
+    <div class="row" style="gap: 6px; margin: 0 0 6px 0">
+      <button id="loadCsv">Load IDs from itemids.csv → box</button>
+      <a
+        id="openWeav3r"
+        class="button"
+        href="https://weav3r.dev/"
+        target="_blank"
+        rel="noopener"
+        >Open weav3r.dev</a
+      >
+    </div>
+    <div class="muted">
+      Tip: the scan uses <b>ONLY</b> the IDs in the textbox. The CSV buttons
+      just fill it for you.
+    </div>
+    <div id="status" class="muted mono">Idle.</div>
+  </div>
+</div>
+
+<h3>Pick IDs from CSV by Market $</h3>
+<div class="row">
+  <label
+    >Min Market $
+    <input id="mvMin" type="number" step="1" placeholder="e.g. 1000"
+  /></label>
+  <label
+    >Max Market $
+    <input id="mvMax" type="number" step="1" placeholder="e.g. 50000"
+  /></label>
+  <button id="filterCsvByMarket">Filter CSV → box</button>
+</div>
+
+<table id="tbl">
+  <thead class="sticky">
+    <tr>
+      <th data-sort="itemName">
+        Item <span class="sort-ind" id="si-itemName"></span>
+      </th>
+      <th data-sort="itemId">
+        Item ID <span class="sort-ind" id="si-itemId"></span>
+      </th>
+      <th data-sort="market">
+        Market $ <span class="sort-ind" id="si-market"></span>
+      </th>
+      <th data-sort="player_name">
+        Player <span class="sort-ind" id="si-player_name"></span>
+      </th>
+      <th data-sort="quantity">
+        Qty <span class="sort-ind" id="si-quantity"></span>
+      </th>
+      <th data-sort="price">
+        Price $ <span class="sort-ind" id="si-price"></span>
+      </th>
+      <th data-sort="vs_market">
+        vs Mkt % <span class="sort-ind" id="si-vs_market"></span>
+      </th>
+      <th data-sort="profit_unit">
+        Profit/unit $ <span class="sort-ind" id="si-profit_unit"></span>
+      </th>
+      <th data-sort="profit_total">
+        Profit total $ <span class="sort-ind" id="si-profit_total"></span>
+      </th>
+      <th>Bazaar</th>
+    </tr>
+  </thead>
+  <tbody id="rows"></tbody>
+</table>
+
+<script src="watcher.js"></script>

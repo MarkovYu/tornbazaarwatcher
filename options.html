@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<title>TW3B Market Watch – Options</title>
+<style>
+  :root {
+    --bg: #0b0d10;
+    --panel: #12161c;
+    --panel-2: #171c23;
+    --text: #e6ebf2;
+    --muted: #94a3b8;
+    --accent: #7dd3fc;
+    --accent-2: #38bdf8;
+    --border: #273244;
+    --good: #22c55e;
+    --bad: #f43f5e;
+    --warn: #f59e0b;
+    --shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  }
+  * {
+    box-sizing: border-box;
+  }
+  html,
+  body {
+    background: var(--bg);
+    color: var(--text);
+  }
+  body {
+    font: 14px system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    padding: 24px;
+    margin: 0 auto;
+    max-width: 1200px;
+  }
+  h1,
+  h2 {
+    margin: 0 0 12px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+  }
+  h1 {
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  h2 {
+    font-size: 18px;
+    color: var(--accent);
+  }
+
+  a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+
+  .btn {
+    border: 1px solid var(--border);
+    background: #0f141a;
+    color: var(--text);
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s transform, 0.2s opacity, 0.2s background, 0.2s border;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 34px;
+  }
+  .btn:hover {
+    transform: translateY(-1px);
+  }
+  .btn.primary {
+    background: linear-gradient(180deg, var(--accent), var(--accent-2));
+    border: 1px solid transparent;
+    color: #001018;
+    font-weight: 700;
+  }
+  .btn.block {
+    width: 100%;
+  }
+
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .tag {
+    font-size: 11px;
+    color: var(--muted);
+    padding: 4px 8px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+  }
+  .muted {
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  .grid2 {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: 1fr 1fr;
+  }
+  @media (max-width: 1024px) {
+    .grid2 {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .panel {
+    background: linear-gradient(180deg, var(--panel-2), var(--panel));
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: var(--shadow);
+  }
+
+  .fields {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(12, 1fr);
+    align-items: end; /* ensures bottoms align across row */
+    margin-bottom: 10px;
+  }
+  .field {
+    display: grid;
+    grid-template-rows: auto 1fr; /* label then control */
+    gap: 6px;
+  }
+  /* width helpers for 12-col grid */
+  .col-12 {
+    grid-column: span 12;
+  }
+  .col-8 {
+    grid-column: span 8;
+  }
+  .col-6 {
+    grid-column: span 6;
+  }
+  .col-5 {
+    grid-column: span 5;
+  }
+  .col-4 {
+    grid-column: span 4;
+  }
+  .col-3 {
+    grid-column: span 3;
+  }
+  .col-2 {
+    grid-column: span 2;
+  }
+
+  label span.lbl {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1;
+    min-height: 14px; /* reserve label height to align buttons with no label */
+    display: block;
+  }
+  .field.nolabel span.lbl {
+    visibility: hidden;
+  } /* keep reserved height */
+
+  input,
+  select {
+    background: #0f141a;
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 8px 10px;
+    min-height: 34px;
+    width: 100%;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 6px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  thead tr {
+    background: #0e1319;
+  }
+  th,
+  td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+  }
+  tbody tr:hover {
+    background: rgba(125, 211, 252, 0.06);
+  }
+  .row-actions .btn {
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+
+  .kpis {
+    display: flex;
+    gap: 18px;
+    align-items: baseline;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+  .kpi strong {
+    font-size: 22px;
+  }
+</style>
+
+<div class="topbar">
+  <h1>TW3B Market Watch <span class="tag">Options</span></h1>
+  <div style="display: flex; gap: 10px; align-items: center">
+    <a id="openWatcher" class="btn">Open Watcher Page</a>
+    <button id="checkNow" class="btn primary">Check now</button>
+  </div>
+</div>
+
+<div class="grid2">
+  <!-- LEFT: Watch rules -->
+  <section class="panel">
+    <h2>Watch rules</h2>
+
+    <!-- catalog + find -->
+    <div class="fields">
+      <label class="field col-4">
+        <span class="lbl">Category</span>
+        <select id="catSelect">
+          <option value="">— Loading… —</option>
+        </select>
+      </label>
+
+      <label class="field col-5">
+        <span class="lbl">Item</span>
+        <select id="itemSelect" disabled>
+          <option value="">— Select a category first —</option>
+        </select>
+      </label>
+
+      <label class="field col-3">
+        <span class="lbl">Search item</span>
+        <input id="itemSearch" placeholder="Type to filter…" />
+      </label>
+    </div>
+
+    <!-- add / update rule -->
+    <div class="fields">
+      <label class="field col-3">
+        <span class="lbl">Item ID</span>
+        <input id="id" type="number" min="1" />
+      </label>
+      <label class="field col-3">
+        <span class="lbl">Name</span>
+        <input id="name" placeholder="(optional)" />
+      </label>
+      <label class="field col-3">
+        <span class="lbl">Max price $</span>
+        <input id="max" type="number" min="1" />
+      </label>
+      <label class="field col-2">
+        <span class="lbl">Min qty</span>
+        <input id="qty" type="number" min="1" />
+      </label>
+      <div class="field nolabel col-1">
+        <span class="lbl"> </span>
+        <button id="add" class="btn primary block">Add</button>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Max $</th>
+          <th>Min Qty</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </section>
+
+  <!-- RIGHT: Recent matches + controls -->
+  <section class="panel">
+    <h2>Recent matches</h2>
+    <div class="kpis">
+      <div class="muted">
+        Auto‑check every <strong id="kpi-every">—</strong> min
+      </div>
+      <div class="muted">
+        Stored matches <strong id="kpi-matches">0</strong>
+      </div>
+    </div>
+
+    <!-- interval / retention / actions -->
+    <div class="fields">
+      <label class="field col-3">
+        <span class="lbl">Change interval (min)</span>
+        <input id="every" type="number" min="1" />
+      </label>
+      <div class="field nolabel col-2">
+        <span class="lbl"> </span>
+        <button id="saveInt" class="btn block">Save</button>
+      </div>
+
+      <label class="field col-3">
+        <span class="lbl">Keep matches (minutes)</span>
+        <input id="retain" type="number" min="1" value="30" />
+      </label>
+      <div class="field nolabel col-2">
+        <span class="lbl"> </span>
+        <button id="saveRetain" class="btn block">Apply</button>
+      </div>
+
+      <div class="field nolabel col-1">
+        <span class="lbl"> </span>
+        <button id="refreshMatches" class="btn block">Refresh</button>
+      </div>
+      <div class="field nolabel col-1">
+        <span class="lbl"> </span>
+        <button id="clearMatches" class="btn block">Clear</button>
+      </div>
+    </div>
+
+    <p class="muted">
+      Old entries are auto‑removed based on the retention window.
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>When</th>
+          <th>Item</th>
+          <th>Price</th>
+          <th>Qty</th>
+          <th>Seller</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="matches"></tbody>
+    </table>
+  </section>
+</div>
+
+<script src="options.js"></script>
